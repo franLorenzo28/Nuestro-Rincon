@@ -265,3 +265,23 @@ ul.post span,.nota p{font:500 1.4rem/1.15 var(--mano);overflow-wrap:anywhere;mar
 .badge-card.locked{background:#eee8e2;opacity:.65}
 .profile-msg{min-height:1.4em;color:var(--suave)}
 @media(max-width:500px){.account-bar{margin:0 12px 12px}.auth-screen{margin:14px 12px}.profile-dialog{padding:18px}}
+
+/* Vistas compartidas de perfiles, top y vínculo. */
+.pair-invite{font:700 2rem var(--mano);letter-spacing:2px;text-align:center;color:var(--acento);background:var(--amar);padding:14px;border-radius:12px;overflow-wrap:anywhere}
+.profile-form{margin:14px 0;padding:12px 0;border-top:1px solid var(--kraft)}
+.profile-form label{display:block;margin-bottom:8px;font-weight:600}
+.rank-row{border-bottom:1px dashed var(--kraft);padding:10px 6px}
+.rank-row:first-child{background:var(--amar);border-radius:10px;font-weight:700}
+.leader-list{margin:8px 0 18px}
+
+/* Aviso de conservación de perfiles sin correo */
+.auth-screen .access-warning {
+  margin: 18px auto 2px;
+  max-width: 44ch;
+  padding: 12px 14px;
+  background: var(--amar);
+  border-radius: 12px;
+  color: var(--tinta);
+  font-size: .88rem;
+  line-height: 1.45;
+}

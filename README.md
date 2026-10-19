@@ -1,60 +1,69 @@
-# Nuestro Rincón 💌
+# Nuestro Rincón — versión en vivo (HTML/CSS/JS + Supabase)
 
-Página estática original, separada en HTML/CSS/JS, con Supabase para cuentas, datos en la nube y logros.
+Proyecto sin frameworks ni proceso de compilación. **No hace falta instalar Node.js.**
 
-## Qué incluye
+## Incluye
 
-- **Diseño original** de `index.html`: mural, listas, vision board, música, puzzle, juegos, desafíos diarios y buzón.
-- **Supabase Auth**: registro y acceso por correo y contraseña.
-- **Perfil**: nombre editable, puntos e insignias.
-- **Guardado en la nube**: listas, buzón, música, desafíos y demás datos de la página se almacenan en `app_entries` asociados a cada usuario, con un respaldo temporal por cuenta en el navegador si falla Internet.
-- **Premios virtuales**: 10 insignias, puntos por juegos ganados y cuatro recompensas desbloqueables por puntos (no tienen valor monetario).
-- **Seguridad**: políticas RLS en las tablas para que cada cuenta acceda solamente a sus datos.
+- Dos perfiles separados **sin correo, contraseña ni verificación**, vinculados por **código de invitación** (máximo dos miembros por rincón).
+- Contenido **compartido**: Por hacer, Por ver, Sueños & Metas, Vision Board, música, playlist, caja fuerte y Buzón de Cartas.
+- Supabase Realtime: las pestañas abiertas reciben los cambios del otro perfil sin recargar (requiere conexión).
+- Datos **individuales**: progreso de Wordle/Conexiones, ajustes de pestaña, nombre, puntos, insignias y partidas.
+- Tops de los seis juegos, victorias por jugador y mejores marcas (menos intentos/movimientos/errores es mejor).
+- RLS para impedir que perfiles ajenos lean los datos del rincón. El código de invitación permite vincular un máximo de dos perfiles; guardalo en privado.
+- Opción **Importar datos** para recuperar listas y notas del antiguo `localStorage`, desde el mismo navegador y mismo dominio.
 
-**Importante**: esta versión guarda datos **por usuario**, incluso al usar distintos dispositivos. No implementa todavía un mural compartido en tiempo real entre dos cuentas. Dos cuentas distintas NO ven automáticamente las cartas de la otra.
+## Preparación segura de Supabase
 
-## Instalación sin Node.js
+**Importante:** `schema.sql` está diseñado para un proyecto de Supabase NUEVO, sin las tablas `profiles`, `game_results` o `earned_badges` anteriores. Si ya ejecutaste el `schema.sql` del ZIP anterior, **no ejecutes este encima**: el esquema ya existe y se necesita una migración específica. No borres datos del proyecto anterior.
 
-1. Creá un **proyecto nuevo** en https://supabase.com/dashboard .
-2. En **SQL Editor**, pegá y ejecutá completo `schema.sql` **una sola vez**. Este SQL está pensado para un esquema nuevo; no lo ejecutes sobre una base donde existan tablas con estos nombres.
-3. En **Project Settings → API Keys** y **Project URL**, copiá el **Project URL** y la **publishable key** (o la clave pública **anon** si tu proyecto usa ese formato).
-4. Abrí `config.js` y reemplazá las dos cadenas `TU-...`. **No uses `service_role`, claves secretas ni contraseñas.** La publishable/anon key está diseñada para usarse en el navegador, pero requiere RLS correctamente configurado.
-5. En **Authentication → URL Configuration**, configurá `Site URL` como la dirección que te da Vercel (`https://tu-proyecto.vercel.app`) y agregá la dirección de Vercel a las **Redirect URLs**. Podés agregar `http://localhost:5500/**` si vas a probar localmente.
-6. En **Authentication → Providers → Email**, mantené habilitado email/password. La confirmación de correo normalmente viene activada por defecto.
-7. Poné `index.html`, `style.css`, `script.js`, `auth.js`, `config.js` y `schema.sql` juntos en la raíz del repositorio (también `fotopuzzle.jpg`, si existe). El SQL puede quedar fuera del sitio publicado, o en una carpeta de documentación.
-8. Importá el repo de GitHub en https://vercel.com/new ; seleccioná **Other** como framework, sin build command ni output directory personalizada. Deploy.
+1. Entrá a https://supabase.com/dashboard y creá un proyecto nuevo de Supabase.
+2. Abrí **SQL Editor** y ejecutá **una sola vez** el contenido completo de `schema.sql`.
+3. En **Authentication → Providers / Sign In**, activá **Allow anonymous sign-ins** (a veces figura como *Anonymous Sign-Ins*). Sin esto, el botón «Crear mi perfil» va a dar error. **No necesitás habilitar ni configurar el correo**, ni desactivar las protecciones del proveedor Email.
+4. Este flujo no usa enlaces de redirección, porque no solicita correos ni verificaciones.
+5. Copiá **Project URL** y una clave pública **publishable** (`sb_publishable_...`) o `anon` en `config.js`:
 
-### Cómo probar en tu PC
+   ```js
+   export const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co';
+   export const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_...';
+   ```
 
-Un servidor local ayuda porque los módulos JS no funcionan correctamente abriendo directamente `file://`.
+   Una clave *publishable/anon* está destinada al navegador. **Nunca subas a GitHub una clave `service_role`, secreta (`sb_secret_...`) ni contraseña de base de datos.** La privacidad depende de las políticas RLS del SQL.
 
-- En VS Code podés usar una extensión de servidor local como Live Server.
-- Si ya tenés Python instalado, desde esta carpeta ejecutá `python -m http.server 5500` y abrí http://localhost:5500 .
-- **No necesitás instalar Node.js, npm, React ni Vercel CLI**.
+6. Desde el primer navegador, escribí un **nombre** y tocá **Crear mi perfil**. Elegí **Crear nuestro rincón** y abrí **Invitar**. La segunda persona, en su navegador habitual, crea su perfil con su nombre y elige **Unirme al rincón** con el código. No compartan ese código públicamente.
 
-### La imagen del puzzle
+## Actualización del GitHub / Vercel actual
 
-Si tenés una foto, guardala con nombre `fotopuzzle.jpg` junto a `index.html`. La página original también acepta `.jpeg` o `.png`. Si falta, aparece la misma imagen temporal que tenía el HTML.
+En `https://github.com/franLorenzo28/Nuestro-Rincon` poné estos archivos **en la raíz** del repositorio:
 
-### ¿Qué se sincroniza?
+- `index.html`
+- `style.css`
+- `script.js`
+- `auth.js`
+- `config.js`
+- `schema.sql` (solo como guía para instalar la base; Vercel no lo ejecuta)
+- `README.md`
 
-Las llamadas originales `ld()/sv()` ahora leen un estado precargado y guardan en Supabase por clave. Al entrar a la cuenta en otro dispositivo aparecen sus datos. Si la conexión falla, los cambios recientes se guardan de forma pendiente **en ese navegador** para intentar sincronizar después.
+**No elimines `fotopuzzle.jpg` ni las demás imágenes que ya subiste.** Se usan desde el HTML original. Si usás una rama de pruebas / preview de Vercel antes de sustituir `main`, podés comprobar todo sin afectar la web actual. Vercel lo sirve como página estática; Framework Preset: **Other** y sin comando de build.
 
-**Límites actuales:** sincronización por cambios, no colaboración en vivo. Si editás **la misma lista** desde dos dispositivos a la vez, la última escritura puede reemplazar la anterior. Las partidas se puntúan al conseguir una victoria y los puntos se asignan mediante triggers; al ser un juego informal, los resultados enviados por el navegador no tienen validación antitrampas del lado servidor.
+## Cómo comprobarlo entre dos teléfonos o navegadores
 
-**Migración de datos viejos:** los datos del HTML anterior (`localStorage`, claves `nr-*`) **no se importan automáticamente**: para evitar mezclar contenidos de distintos usuarios y conservar el original. No borres el HTML antiguo ni su almacenamiento si querés recuperar esos datos.
+1. Abrí la nueva versión desde dos navegadores separados, uno con cada perfil (sin correo, contraseña ni confirmación).
+2. Vinculá ambas cuentas al mismo rincón con el código de invitación.
+3. En el primer navegador: Mural → **Vision Board** → Boda → agregá una idea.
+4. En el segundo, tené abierto Mural → Vision Board → Boda: la idea debería aparecer **sin recargar**.
+5. Repetí con **Por hacer** y con **Buzón de Cartas**. Verificá el estado «Sincronizado».
+6. Ganá un juego en una cuenta, luego abrí **Tops** y **Perfiles** desde cualquiera de las dos.
+7. Probá recargar. Los datos deben conservarse en Supabase.
 
-### Archivos
+## Limitaciones / detalles técnicos
 
-| Archivo | Función |
-|---|---|
-| `index.html` | Estructura original de la web. |
-| `style.css` | Estilos originales + interfaz mínima de cuentas. |
-| `script.js` | Juegos y lógica original, con cambios puntuales para sincronizar. |
-| `auth.js` | Login, registro, sincronización, perfiles y logros. |
-| `config.js` | URL + clave pública de Supabase (completar). |
-| `schema.sql` | Tablas, políticas RLS, triggers y puntos. |
-
-## Créditos
-
-Partimos del archivo HTML original que compartiste. Su aspecto se conserva; se agregaron únicamente el acceso y el panel de perfil.
+- **MUY IMPORTANTE — acceso sin correo:** Supabase crea una identidad anónima con una sesión en este navegador. Si abrís el sitio en otro navegador/dispositivo, cerrás la sesión o borrás los datos del sitio, **no podés recuperar el mismo perfil**. Tus datos compartidos pueden permanecer en Supabase, pero tu historial personal (puntos/logros/rankings) quedaría ligado a la sesión anterior. Por eso esta versión no muestra «Cerrar sesión». Para acceso recuperable en varios dispositivos se necesita añadir un método de autenticación o recuperación seguro, por ejemplo passkeys o un backend que gestione credenciales, sin guardar contraseñas en código público. No usen modo incógnito.
+- El modo Realtime usa **Postgres Changes** (apropiado para dos usuarios; para tráfico grande Supabase recomienda Broadcast).
+- Las listas y el Vision Board actuales se guardan como arreglos JSON por sección. Si los dos editan **el mismo apartado exactamente al mismo tiempo**, puede prevalecer la última escritura: en una versión futura conviene migrar a una fila SQL por elemento para evitar conflictos.
+- Las puntuaciones del ranking son una **competencia amistosa**: el cliente envía sus resultados; no hay un sistema antifraude del lado del servidor.
+- Se guarda como máximo un resultado por juego y jugador **por día**. Una mejor marca del mismo día reemplaza la anterior sin duplicar puntos.
+- Los puntos y logros se asignan en la base de datos. Los premios son insignias virtuales, no transacciones monetarias.
+- El juego Wordle y Conexiones siguen siendo individuales, para que cada persona pueda completarlos por separado.
+- Los datos que estaban en el `localStorage` original **no aparecen automáticamente**. Tras ingresar, tocá **Importar datos** desde el **mismo navegador y mismo dominio** de la web original. No se sobrescriben secciones que ya tengan contenido en Supabase. Las listas anteriores se conservan en el navegador.
+- Las fotografías almacenadas en un **repositorio GitHub público** también son públicas. Si quieren fotos privadas, usar un repositorio privado más almacenamiento privado con acceso controlado sería una mejora relevante.
+- No se ha probado contra un proyecto Supabase real en este entorno: falta configurar tus credenciales públicas y realizar la prueba entre dos cuentas.

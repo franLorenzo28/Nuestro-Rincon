@@ -113,7 +113,11 @@ function lista(b,k,mode,ph,cb){
   cn.textContent=it.length?(mode==='check'?it.filter(x=>x.d).length+' de '+it.length+' completados':''):'Todavía no hay nada. Agreguen lo primero.'}
 
  f.addEventListener('submit',e=>{e.preventDefault();const t=inp.value.trim();if(!t)return;it.push({t,d:false});inp.value='';save()});
-
+ // Escuchar cambios de la otra cuenta mientras esta ventana está abierta.
+ const unsubscribe=window.nrStore?.onChange(k,remote=>{
+   it=Array.isArray(remote)?structuredClone(remote):[];draw();if(cb)cb(it);
+ });
+ b.closest('dialog')?.addEventListener('close',()=>unsubscribe?.(),{once:true});
  draw();
 
 }
@@ -140,15 +144,16 @@ const VIS=[['boda','Boda',['Una ceremonia pequeña, al aire libre','Música en v
 
  ['viajes','Viajes',['Una ruta de pueblos pequeños','Ver un amanecer en un lugar nuevo','Un tren sin destino fijo','Playa en invierno','Volver al primer lugar que visitamos']]];
 
-juego(M,'vision','Vision Board','vision',b=>{
-
- b.innerHTML='';const tb=el('div','tabs'),box=el('div');tb.setAttribute('role','tablist');b.append(tb,box);
+ juego(M,'vision','Vision Board','vision',b=>{
+  b.innerHTML='';const tb=el('div','tabs'),box=el('div');tb.setAttribute('role','tablist');b.append(tb,box);
+  let activeUnsubscribe=null;
+  b.closest('dialog')?.addEventListener('close',()=>activeUnsubscribe?.(),{once:true});
 
  VIS.forEach(([id,t,seed],n)=>{const bt=el('button','',t);bt.setAttribute('role','tab');tb.appendChild(bt);
 
   bt.addEventListener('click',()=>{[...tb.children].forEach(x=>x.setAttribute('aria-selected',x===bt));panel(id,seed)});if(n===0)bt.click()});
 
- function panel(id,seed){box.innerHTML='';
+  function panel(id,seed){activeUnsubscribe?.();box.innerHTML='';
 
   const f=el('form','add'),inp=el('input');inp.maxLength=100;inp.placeholder='Una idea para sumar al collage';inp.setAttribute('aria-label','Nueva idea');f.append(inp,el('button','btn','Agregar'));
 
@@ -166,7 +171,9 @@ juego(M,'vision','Vision Board','vision',b=>{
 
     mas.appendChild(c)})}
 
-  f.addEventListener('submit',e=>{e.preventDefault();const t=inp.value.trim();if(!t)return;mine.push(t);sv('vis-'+id,mine);inp.value='';draw()});draw()}
+   f.addEventListener('submit',e=>{e.preventDefault();const t=inp.value.trim();if(!t)return;mine.push(t);sv('vis-'+id,mine);inp.value='';draw()});
+  activeUnsubscribe=window.nrStore?.onChange('vis-'+id,remote=>{mine=Array.isArray(remote)?structuredClone(remote):[];draw()});
+  draw()}
 
 });
 
@@ -214,7 +221,9 @@ juego(M,'musica','Nuestra Música','musica',b=>{
 
  const link=()=>{const u=ld('playlist',''),a=b.querySelector('#pa');a.innerHTML='';if(/^https?:\/\//i.test(u)){const x=el('a','','Abrir nuestra playlist');x.href=u;x.target='_blank';x.rel='noopener';a.appendChild(x)}};
 
- b.querySelector('#pg').addEventListener('click',()=>{const v=b.querySelector('#pl').value.trim();if(/^https?:\/\//i.test(v)){sv('playlist',v);b.querySelector('#pl').value='';link()}else b.querySelector('#pl').focus()});link();
+ b.querySelector('#pg').addEventListener('click',()=>{const v=b.querySelector('#pl').value.trim();if(/^https?:\/\//i.test(v)){sv('playlist',v);b.querySelector('#pl').value='';link()}else b.querySelector('#pl').focus()});
+ const stopLink=window.nrStore?.onChange('playlist',link);
+ b.closest('dialog')?.addEventListener('close',()=>stopLink?.(),{once:true});link();
 
 });
 
@@ -546,6 +555,10 @@ $('#form').addEventListener('submit',e=>{e.preventDefault();const t=tx.value.tri
 
  const ok=sv(KEY,notas);if(a)sv('autor',a);tx.value='';es.textContent=ok?'Mensaje guardado.':'Se pegó, pero el navegador no permite guardarlo (¿modo privado?).';dibuja()});
 
-tx.addEventListener('input',()=>{es.textContent=''});dibuja();
+ tx.addEventListener('input',()=>{es.textContent=''});
+ window.nrStore?.onChange('notas',remote=>{
+  notas=Array.isArray(remote)?structuredClone(remote):[];dibuja();
+ });
+ dibuja();
 
 })();
