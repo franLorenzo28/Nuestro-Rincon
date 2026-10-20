@@ -283,7 +283,7 @@ ul.post span,.nota p{font:500 1.4rem/1.15 var(--mano);overflow-wrap:anywhere;mar
 .profile-msg{min-height:1.4em;color:var(--suave)}
 @media(max-width:500px){.account-bar{margin:0 12px 12px}.auth-screen{margin:14px 12px}.profile-dialog{padding:18px}}
 @media(max-width:420px){.fm{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:4px}.fm>b{grid-column:1/-1}.fm select{width:100%;padding-inline:4px}.fm.acusacion{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:350px){.badge-list,.reward-list{grid-template-columns:1fr}}
+@media(max-width:420px){.badge-list,.reward-list{grid-template-columns:1fr}}
 @media(max-width:320px){.hoja header{flex-direction:column;align-items:stretch}.hoja header h3{overflow-wrap:normal}.hoja header .cerrar{align-self:flex-end}}
 
 /* Vistas compartidas de perfiles, top y vínculo. */
