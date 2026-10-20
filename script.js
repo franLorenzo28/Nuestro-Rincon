@@ -136,24 +136,18 @@ juego(M,'metas','Sueños & Metas','metas',b=>lista(b,'metas','post','Una meta qu
 
 
 
-const VIS=[['boda','Boda',['Una ceremonia pequeña, al aire libre','Música en vivo al atardecer','Votos escritos a mano','Flores del campo y velas','Un brindis con quienes más queremos']],
-
- ['casa','Casa',['Una cocina para cocinar juntos','Rincón de lectura con manta y luz cálida','Plantas en cada ventana','Una pared con nuestras fotos','Un jardín chiquito']],
-
- ['vida','Vida',['Domingos sin apuro','Un proyecto que sea nuestro','Cuidarnos y cuidar a los que queremos','Aprender algo nuevo juntos','Cenas largas con buena conversación']],
-
- ['viajes','Viajes',['Una ruta de pueblos pequeños','Ver un amanecer en un lugar nuevo','Un tren sin destino fijo','Playa en invierno','Volver al primer lugar que visitamos']]];
+const VIS=[['boda','Boda'],['casa','Casa'],['vida','Vida'],['viajes','Viajes']];
 
  juego(M,'vision','Vision Board','vision',b=>{
   b.innerHTML='';const tb=el('div','tabs'),box=el('div');tb.setAttribute('role','tablist');b.append(tb,box);
   let activeUnsubscribe=null;
   b.closest('dialog')?.addEventListener('close',()=>activeUnsubscribe?.(),{once:true});
 
- VIS.forEach(([id,t,seed],n)=>{const bt=el('button','',t);bt.setAttribute('role','tab');tb.appendChild(bt);
+ VIS.forEach(([id,t],n)=>{const bt=el('button','',t);bt.setAttribute('role','tab');tb.appendChild(bt);
 
-  bt.addEventListener('click',()=>{[...tb.children].forEach(x=>x.setAttribute('aria-selected',x===bt));panel(id,seed)});if(n===0)bt.click()});
+  bt.addEventListener('click',()=>{[...tb.children].forEach(x=>x.setAttribute('aria-selected',x===bt));panel(id)});if(n===0)bt.click()});
 
-  function panel(id,seed){activeUnsubscribe?.();box.innerHTML='';
+  function panel(id){activeUnsubscribe?.();box.innerHTML='';
 
   const f=el('form','add'),inp=el('input');inp.maxLength=100;inp.placeholder='Una idea para sumar al collage';inp.setAttribute('aria-label','Nueva idea');f.append(inp,el('button','btn','Agregar'));
 
@@ -161,13 +155,13 @@ const VIS=[['boda','Boda',['Una ceremonia pequeña, al aire libre','Música en v
 
   function draw(){mas.innerHTML='';
 
-   seed.map(t=>({t})).concat(mine.map((t,i)=>({t,i,m:1}))).forEach((x,n)=>{const c=el('div');c.style.setProperty('--c',COL[n%5]);c.style.setProperty('--h',(70+(n*29)%60)+'px');
+   mine.forEach((t,n)=>{const c=el('div');c.style.setProperty('--c',COL[n%5]);c.style.setProperty('--h',(70+(n*29)%60)+'px');
 
     if(n%3===1)c.insertAdjacentHTML('beforeend','<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" aria-hidden="true">'+IC.vision+'</svg>');
 
-    c.appendChild(el('span','',x.t));
+    c.appendChild(el('span','',t));
 
-    if(x.m){const q=el('button','q','Quitar');q.type='button';q.addEventListener('click',()=>{mine.splice(x.i,1);sv('vis-'+id,mine);draw()});c.appendChild(q)}
+    const q=el('button','q','Quitar');q.type='button';q.addEventListener('click',()=>{mine.splice(n,1);sv('vis-'+id,mine);draw()});c.appendChild(q);
 
     mas.appendChild(c)})}
 
