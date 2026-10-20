@@ -219,6 +219,42 @@ ul.post span,.nota p{font:500 1.4rem/1.15 var(--mano);overflow-wrap:anywhere;mar
 
 .disp span{width:44px;flex:0 1 44px;min-width:0;height:52px;border-bottom:3px solid var(--acento);display:grid;place-items:center;font:700 2rem var(--mano)}
 
+.game-status{text-align:center;font-weight:600;color:var(--acento);min-height:1.5em}
+.tateti-menu .btn{margin:4px 8px 4px 0}
+.tateti-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:min(100%,310px);margin:12px auto}
+.tateti-cell{aspect-ratio:1;border:2px solid var(--kraft);border-radius:12px;background:var(--papel);font:700 clamp(2.4rem,10vw,4rem)/1 var(--mano);color:var(--acento)}
+.tateti-cell.mark-o{color:#68826B}.tateti-cell.winning{background:var(--verde);border-color:#9EB89D}
+.tateti-cell:disabled{cursor:default;opacity:1}.tateti-cell:not(:disabled):hover{background:var(--amar)}
+.snake-canvas{display:block;width:min(100%,360px);height:auto;margin:10px auto;border:4px solid var(--kraft2);border-radius:12px;touch-action:none}
+.snake-message{text-align:center;color:var(--suave)}
+.snake-controls{display:flex;justify-content:center;gap:8px;margin:10px 0}
+.snake-controls button{width:52px;height:48px;border:2px solid var(--kraft);border-radius:12px;background:var(--papel);font-size:1.5rem;line-height:1}
+.snake-controls button:active{background:var(--verde)}
+#m-mist{width:min(96vw,940px)}
+.murdoku .cuenta{line-height:1.45}
+.mur-layout{display:grid;grid-template-columns:minmax(240px,1fr) minmax(330px,420px);gap:18px;align-items:start}
+.mur-suspects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.mur-layout .mur-suspects{grid-template-columns:1fr}
+.mur-suspect{text-align:left;border:2px solid var(--kraft);border-radius:10px;background:var(--papel);padding:8px 10px}
+.mur-suspect.selected{border-color:var(--acento);background:var(--rosa)}
+.mur-suspect strong,.mur-suspect small{display:block}.mur-suspect small{color:var(--suave);line-height:1.35;margin-top:2px}
+.mur-legend{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0}
+.mur-legend span{border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:600}
+.mur-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:min(100%,420px);margin:10px auto;border:3px solid var(--kraft2);border-radius:8px;overflow:hidden}
+.mur-cell{position:relative;aspect-ratio:1;border:1px solid rgba(94,74,66,.2);padding:0;display:grid;place-items:center;min-width:0}
+.mur-cell.room-right{border-right:3px solid var(--kraft2)}.mur-cell.room-bottom{border-bottom:3px solid var(--kraft2)}
+.room-0{background:var(--amar)}.room-1{background:var(--rosa)}.room-2{background:var(--verde)}.room-3{background:var(--azul)}
+.mur-cell.blocked{cursor:not-allowed;background-image:repeating-linear-gradient(45deg,transparent 0 5px,rgba(94,74,66,.1) 5px 8px)}
+.mur-cell:not(:disabled):hover{outline:3px solid var(--acento);outline-offset:-3px}
+.mur-object{position:absolute;top:1px;left:3px;font-size:clamp(.7rem,2vw,1rem);line-height:1}
+.mur-person{font:700 clamp(1.2rem,5vw,2rem)/1 var(--mano);color:var(--tinta);background:var(--papel);border-radius:50%;width:60%;aspect-ratio:1;display:grid;place-items:center;box-shadow:0 2px 5px rgba(94,74,66,.2)}
+.mur-cross{color:var(--acento);font-size:2rem;line-height:1}
+.mur-status{text-align:center;margin:8px 0}.mur-controls{margin:8px 0 14px}.mur-accusation{text-align:center}
+.mur-accuse-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.mur-accuse-buttons .btn{padding:7px 14px}
+@media(max-width:730px){.mur-layout{grid-template-columns:1fr}.mur-layout .mur-suspects{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:430px){.mur-layout .mur-suspects{grid-template-columns:1fr}.mur-suspect{padding:6px 8px}}
+
 
 
 /* buzón */

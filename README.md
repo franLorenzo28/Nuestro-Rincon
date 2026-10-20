@@ -8,7 +8,8 @@ Proyecto sin frameworks ni proceso de compilación. **No hace falta instalar Nod
 - Contenido **compartido**: Por hacer, Por ver, Sueños & Metas, Vision Board, música, playlist, caja fuerte y Buzón de Cartas.
 - Supabase Realtime: las pestañas abiertas reciben los cambios del otro perfil sin recargar (requiere conexión).
 - Datos **individuales**: progreso de Wordle/Conexiones, ajustes de pestaña, nombre, puntos, insignias y partidas.
-- Tops de los seis juegos, victorias por jugador y mejores marcas (menos intentos/movimientos/errores es mejor).
+- Tops de ocho juegos, victorias por jugador y mejores marcas (en Vivorita gana quien come más frutas; en los otros juegos con puntuación, la menor marca es mejor).
+- Tatetí contra la máquina o entre los dos perfiles del rincón: uno crea la sala y el otro se une desde su perfil. Vivorita admite teclado y controles táctiles. Murdoku se resuelve ubicando personajes en una escena con pistas y descartes.
 - RLS para impedir que perfiles ajenos lean los datos del rincón. El código de invitación permite vincular un máximo de dos perfiles; guardalo en privado.
 - Opción **Importar datos** para recuperar listas y notas del antiguo `localStorage`, desde el mismo navegador y mismo dominio.
 
@@ -17,6 +18,8 @@ Proyecto sin frameworks ni proceso de compilación. **No hace falta instalar Nod
 **Importante:** `schema.sql` está diseñado para un proyecto de Supabase NUEVO, sin las tablas `profiles`, `game_results` o `earned_badges` anteriores. Si ya ejecutaste el `schema.sql` del ZIP anterior, **no ejecutes este encima**: el esquema ya existe y se necesita una migración específica. No borres datos del proyecto anterior.
 
 Si el proyecto ya tiene `profiles`, `app_entries`, `game_results` y `earned_badges` de la versión individual, ejecutá **`migrate-existing-project.sql` una sola vez** en su SQL Editor. La migración conserva `app_entries`, archiva la tabla anterior como `game_results_legacy`, copia los resultados y reúne los dos perfiles existentes en un rincón. No ejecutes después `schema.sql` en ese mismo proyecto. La migración se aplicó al proyecto `vpnwtoucbxvxvfhyhepp` el 19 de octubre de 2026; no la repitas allí.
+
+Para una instalación existente anterior a Tatetí y Vivorita, ejecutá **`add-arcade-games.sql` una vez** antes de publicar los archivos nuevos. Amplía los juegos, logros y puntuaciones sin borrar datos. Ya se aplicó al proyecto `vpnwtoucbxvxvfhyhepp` el 20 de octubre de 2026; no hace falta repetirla allí.
 
 1. Entrá a https://supabase.com/dashboard y creá un proyecto nuevo de Supabase.
 2. Abrí **SQL Editor** y ejecutá **una sola vez** el contenido completo de `schema.sql`.
@@ -40,6 +43,8 @@ En `https://github.com/franLorenzo28/Nuestro-Rincon` poné estos archivos **en l
 - `index.html`
 - `style.css`
 - `script.js`
+- `arcade-games.mjs`
+- `murdoku.mjs`
 - `auth.js`
 - `config.js`
 - `schema.sql` (solo como guía para instalar la base; Vercel no lo ejecuta)
@@ -68,4 +73,3 @@ En `https://github.com/franLorenzo28/Nuestro-Rincon` poné estos archivos **en l
 - El juego Wordle y Conexiones siguen siendo individuales, para que cada persona pueda completarlos por separado.
 - Los datos que estaban en el `localStorage` original **no aparecen automáticamente**. Tras ingresar, tocá **Importar datos** desde el **mismo navegador y mismo dominio** de la web original. No se sobrescriben secciones que ya tengan contenido en Supabase. Las listas anteriores se conservan en el navegador.
 - Las fotografías almacenadas en un **repositorio GitHub público** también son públicas. Si quieren fotos privadas, usar un repositorio privado más almacenamiento privado con acceso controlado sería una mejora relevante.
-- No se ha probado contra un proyecto Supabase real en este entorno: falta configurar tus credenciales públicas y realizar la prueba entre dos cuentas.

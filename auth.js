@@ -11,17 +11,18 @@ const db = configured ? createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : n
 let user = null, pair = null, store = null, profileDialog = null;
 let realtimeChannel = null, loadedApp = false;
 
-const GAMES = {puzzle:'Puzzle', wordle:'Wordle', conex:'Conexiones', memotest:'Memotest', misterio:'Misterio', caja:'Caja fuerte'};
-const POINTS = {puzzle:30, wordle:20, conex:20, memotest:15, misterio:10, caja:5};
+const GAMES = {puzzle:'Puzzle', wordle:'Wordle', conex:'Conexiones', memotest:'Memotest', misterio:'Misterio', tateti:'Tatetí', snake:'Vivorita', caja:'Caja fuerte'};
+const POINTS = {puzzle:30, wordle:20, conex:20, memotest:15, misterio:10, tateti:10, snake:10, caja:5};
 const BADGES = [
   ['primera_carta','💌','Primera carta'], ['primer_plan','📌','Primer plan'],
   ['primer_juego','⭐','Primer triunfo'], ['puzzle','🧩','Rompecabezas'],
   ['wordle','🔤','Palabra ganadora'], ['conex','🧠','Conexiones'],
   ['memotest','🎴','Memoria de oro'], ['misterio','🔎','Detective'],
+  ['tateti','⭕','Tatetí ganado'], ['snake','🐍','Vivorita experta'],
   ['caja','🔐','Caja abierta'], ['tres_juegos','🏆','Campeón arcade']
 ];
 const REWARDS = [[50,'🌷','Sello de primavera'],[100,'🎀','Cinta de plata'],[200,'🏆','Trofeo dorado'],[350,'👑','Leyenda del arcade']];
-const isShared = k => /^(todo|ver|metas|canciones|playlist|notas|caja|vis-[a-z]+)$/.test(k);
+const isShared = k => /^(todo|ver|metas|canciones|playlist|notas|caja|tateti-room|vis-[a-z]+)$/.test(k);
 const safe = str => String(str).replace(/[&<>"']/g,c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function status(message) { const e=$('#cloud-status'); if(e) e.textContent=message; }
 function showOnlyAccess() {
@@ -250,12 +251,12 @@ async function showLeaderboard(){
       const data=people.map(p=>{
         const wins=results.filter(r=>r.game===game&&r.user_id===p.id);
         const scores=wins.filter(r=>r.score!==null).map(r=>r.score);
-        return {name:p.display_name,wins:wins.length,best:scores.length?Math.min(...scores):null};
-      }).sort((a,b)=>b.wins-a.wins||(a.best??Infinity)-(b.best??Infinity));
+        return {name:p.display_name,wins:wins.length,best:scores.length?(game==='snake'?Math.max(...scores):Math.min(...scores)):null};
+      }).sort((a,b)=>b.wins-a.wins||(game==='snake'?(b.best??-1)-(a.best??-1):(a.best??Infinity)-(b.best??Infinity)));
       const list=document.createElement('div');list.className='leader-list';
       for(const [i,p] of data.entries()){
         const info=document.createElement('div');info.className='rank-row';
-        info.textContent=`${i+1}. ${p.name} — ${p.wins} ${p.wins===1?'victoria':'victorias'}${p.best!==null?' · mejor marca: '+p.best:''}`;list.append(info);}
+        info.textContent=`${i+1}. ${p.name} — ${p.wins} ${p.wins===1?'victoria':'victorias'}${p.best!==null?' · mejor marca: '+p.best+(game==='snake'?' frutas':''):''}`;list.append(info);}
       d.append(list);
     }
     const b=document.createElement('button');b.className='btn';b.textContent='Cerrar';b.onclick=()=>d.close();d.append(b);
@@ -265,7 +266,7 @@ async function showLeaderboard(){
 function toScore(game,result){
   const str=String(result);
   if(game==='conex'){const m=str.match(/(\d+)\s+errores?/);return m?Number(m[1]):0;}
-  if(['puzzle','memotest','wordle'].includes(game)){const n=parseInt(str,10);return Number.isFinite(n)?n:null;}
+  if(['puzzle','memotest','wordle','tateti','snake'].includes(game)){const n=parseInt(str,10);return Number.isFinite(n)?n:null;}
   return null;
 }
 async function recordWin(game,result){
@@ -293,7 +294,7 @@ async function openRoom(){
   if(!pair)return showPairSetup();
   try{
     screen.innerHTML='<h2>Abriendo Nuestro Rincón…</h2><p>Sincronizando las listas y cartas.</p>';screen.hidden=false;
-    store=createStore();await store.initialize();window.nrStore=store;
+    store=createStore();await store.initialize();window.nrStore=store;window.nrIdentity={id:user.id};
     window.nrGameResult=(game,result)=>{void recordWin(game,result);};
     makeBar();
     if(!loadedApp){await import('./script.js');loadedApp=true;}

@@ -1,3 +1,6 @@
+import { openTicTacToe, openSnake } from './arcade-games.mjs';
+import { openMurdoku } from './murdoku.mjs';
+
 (function(){
 
 'use strict';
@@ -61,6 +64,10 @@ const IC={
  mist:'<circle cx="11" cy="11" r="6"/><path d="M16 16l5 5"/>',
 
  memo:'<rect x="3" y="6" width="9" height="13" rx="1.5"/><rect x="12" y="5" width="9" height="13" rx="1.5"/>',
+
+ tateti:'<path d="M8 3v18M16 3v18M3 8h18M3 16h18M4 4l3 3m0-3L4 7"/><circle cx="20" cy="20" r="2"/>',
+
+ snake:'<path d="M4 17h5a3 3 0 003-3V9a3 3 0 013-3h5M17 4l3 2-3 2"/><circle cx="5" cy="17" r="1"/>',
 
  caja:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
 
@@ -317,31 +324,18 @@ load(0);
 
 const A=$('#arcade');
 
-juego(A,'mist','Murdoku de Misterio','mist',b=>{
+juego(A,'mist','Murdoku de Misterio','mist',(b,dlg)=>openMurdoku(b,dlg,{
+ get:ld,set:sv,onWin:result=>window.nrGameResult?.('misterio',result)
+}));
 
- b.innerHTML='';const S=['Ana','Bruno','Clara'],L=['Cocina','Jardín','Salón'],O=['Tenedor','Servilleta','Taza'];
+juego(A,'tateti','Tatetí','tateti',(b,dlg)=>openTicTacToe(b,dlg,{
+ store:window.nrStore,userId:window.nrIdentity.id,
+ onWin:score=>window.nrGameResult?.('tateti',score)
+}));
 
- b.appendChild(el('p','','Desapareció el último trozo de la torta. Cada sospechoso estaba en un lugar distinto y dejó un objeto distinto. Usen las pistas para saber quién fue, dónde estaba y qué objeto dejó.'));
-
- const ul=el('ul');['Ana no estaba en la Cocina.','Clara no estaba ni en el Jardín ni en la Cocina.','Quien estaba en la Cocina dejó el Tenedor.','Ana no dejó la Taza.','El culpable dejó el tenedor con crema.'].forEach(t=>ul.appendChild(el('li','',t)));b.appendChild(ul);
-
- const opt=(a,t)=>{const s=el('select');s.appendChild(new Option(t,''));a.forEach(x=>s.appendChild(new Option(x,x)));return s};
-
- b.appendChild(el('p','','Su tabla de apuntes (opcional):'));const fm=el('div','fm');S.forEach(n=>fm.append(el('b','',n),opt(L,'Lugar'),opt(O,'Objeto')));b.appendChild(fm);
-
- b.appendChild(el('p','','Su acusación:'));const f2=el('div','fm acusacion');const a=opt(S,'Sospechoso'),l=opt(L,'Lugar'),o=opt(O,'Objeto');f2.append(a,l,o);b.appendChild(f2);
-
- const m=el('div','aviso');m.hidden=true;const bt=el('button','btn','Acusar');bt.type='button';const acc=el('div','acc');acc.appendChild(bt);b.append(acc,m);
-
- bt.addEventListener('click',()=>{if(!a.value||!l.value||!o.value){m.className='aviso mal';m.textContent='Elijan sospechoso, lugar y objeto.';m.hidden=false;return}
-
-  const n=(a.value==='Bruno')+(l.value==='Cocina')+(o.value==='Tenedor');
-
-  if(n===3){window.nrGameResult?.('misterio','resuelto');m.className='aviso ok';m.innerHTML='<b>Caso resuelto</b>';m.append('Fue Bruno, en la Cocina, con el Tenedor. Gran trabajo en equipo.')}
-
-  else{m.className='aviso mal';m.textContent='Tienen '+n+' de 3 correctos. Revisen las pistas.'}m.hidden=false});
-
-});
+juego(A,'snake','Vivorita','snake',(b,dlg)=>openSnake(b,dlg,{
+ get:ld,set:sv,onWin:score=>window.nrGameResult?.('snake',score)
+}));
 
 
 
