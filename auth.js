@@ -202,26 +202,41 @@ async function refreshBar(){
     if(me)$('#account-name').textContent=`${me.display_name} · ${me.points} puntos`;}
   catch(err){console.warn('Resumen',err);}
 }
-function makeCard(row,kind='') {const d=document.createElement('div');d.className='badge-card '+kind;d.textContent=row;return d;}
+function profileItem(emoji,name,status,kind){
+  const item=document.createElement('li');item.className=kind;
+  const icon=document.createElement('span');icon.className='profile-item-icon';icon.textContent=emoji;icon.setAttribute('aria-hidden','true');
+  const copy=document.createElement('span');copy.className='profile-item-copy';
+  const title=document.createElement('strong');title.textContent=name;
+  const state=document.createElement('small');state.textContent=status;
+  copy.append(title,state);item.append(icon,copy);return item;
+}
 async function showProfiles(){
   const d=dialogBase();d.innerHTML='<h2>Perfiles</h2><p>Cargando…</p>';
   try{
     const {people,results,badges}=await getSummary();d.innerHTML='<h2>Perfiles del rincón</h2>';
     for(const p of people){const self=p.id===user.id;
-      const h=document.createElement('h3');h.textContent=(self?'⭐ ':'🌷 ')+p.display_name;d.append(h);
+      const section=document.createElement('section');section.className='profile-person';
+      const h=document.createElement('h3');h.textContent=(self?'⭐ ':'🌷 ')+p.display_name;section.append(h);
       const count=results.filter(r=>r.user_id===p.id).length;
-      d.append(makeCard(`${p.points} puntos · ${count} partidas ganadas · ${badges.filter(b=>b.user_id===p.id).length}/${BADGES.length} logros`));
-      const list=document.createElement('div');list.className='badge-list';
+      const summary=document.createElement('p');summary.className='profile-summary';
+      summary.textContent=`${p.points} puntos · ${count} partidas ganadas · ${badges.filter(b=>b.user_id===p.id).length}/${BADGES.length} logros`;
+      section.append(summary);
+      const list=document.createElement('ul');list.className='badge-list';
       BADGES.forEach(([code,emoji,name])=>{const got=badges.some(b=>b.user_id===p.id&&b.badge_code===code);
-        list.append(makeCard(`${emoji} ${name}${got?' ✓':' · pendiente'}`,got?'':'locked'));});
-      d.append(list);
-      const rewards=document.createElement('p');rewards.textContent='Premios: '+REWARDS.map(([pts,emoji,name])=>`${emoji} ${name} (${pts} pts)${p.points>=pts?' ✓':' 🔒'}`).join(' · ');d.append(rewards);
+        list.append(profileItem(emoji,name,got?'✓ Conseguido':'Pendiente',got?'badge-card':'badge-card locked'));});
+      section.append(list);
+      const rewardTitle=document.createElement('p');rewardTitle.className='reward-title';rewardTitle.textContent='Premios';section.append(rewardTitle);
+      const rewards=document.createElement('ul');rewards.className='reward-list';
+      REWARDS.forEach(([pts,emoji,name])=>{const unlocked=p.points>=pts;
+        rewards.append(profileItem(emoji,`${name} (${pts} pts)`,unlocked?'✓ Desbloqueado':'🔒 Bloqueado',unlocked?'reward-item':'reward-item locked'));});
+      section.append(rewards);
       if(self){const f=document.createElement('form');f.className='profile-form';
         f.innerHTML='<label for="edit-name">Cambiar mi nombre</label><div class="add"><input id="edit-name" maxlength="30" required><button class="btn">Guardar</button></div><p class="est" role="status"></p>';
         f.querySelector('input').value=p.display_name;
         f.onsubmit=async e=>{e.preventDefault();const value=f.querySelector('input').value.trim();if(!value)return;
           const {error}=await db.from('profiles').update({display_name:value}).eq('id',user.id);
-          f.querySelector('.est').textContent=error?'Error: '+error.message:'Nombre actualizado';if(!error)void refreshBar();};d.append(f);}
+          f.querySelector('.est').textContent=error?'Error: '+error.message:'Nombre actualizado';if(!error)void refreshBar();};section.append(f);}
+      d.append(section);
     }
     const btn=document.createElement('button');btn.className='btn';btn.textContent='Cerrar';btn.onclick=()=>d.close();d.append(btn);
   }catch(err){d.innerHTML='<h2>Perfiles</h2><p>No se pudieron cargar los datos: '+safe(err.message)+'</p><button class="btn" id="close-dialog">Cerrar</button>';
