@@ -335,7 +335,7 @@ juego(A,'mist','Murdoku de Misterio','mist',b=>{
 
  b.appendChild(el('p','','Su tabla de apuntes (opcional):'));const fm=el('div','fm');S.forEach(n=>fm.append(el('b','',n),opt(L,'Lugar'),opt(O,'Objeto')));b.appendChild(fm);
 
- b.appendChild(el('p','','Su acusación:'));const f2=el('div','fm');const a=opt(S,'Sospechoso'),l=opt(L,'Lugar'),o=opt(O,'Objeto');f2.append(a,l,o);b.appendChild(f2);
+ b.appendChild(el('p','','Su acusación:'));const f2=el('div','fm acusacion');const a=opt(S,'Sospechoso'),l=opt(L,'Lugar'),o=opt(O,'Objeto');f2.append(a,l,o);b.appendChild(f2);
 
  const m=el('div','aviso');m.hidden=true;const bt=el('button','btn','Acusar');bt.type='button';const acc=el('div','acc');acc.appendChild(bt);b.append(acc,m);
 

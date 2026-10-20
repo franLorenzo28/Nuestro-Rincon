@@ -16,6 +16,8 @@ Proyecto sin frameworks ni proceso de compilación. **No hace falta instalar Nod
 
 **Importante:** `schema.sql` está diseñado para un proyecto de Supabase NUEVO, sin las tablas `profiles`, `game_results` o `earned_badges` anteriores. Si ya ejecutaste el `schema.sql` del ZIP anterior, **no ejecutes este encima**: el esquema ya existe y se necesita una migración específica. No borres datos del proyecto anterior.
 
+Si el proyecto ya tiene `profiles`, `app_entries`, `game_results` y `earned_badges` de la versión individual, ejecutá **`migrate-existing-project.sql` una sola vez** en su SQL Editor. La migración conserva `app_entries`, archiva la tabla anterior como `game_results_legacy`, copia los resultados y reúne los dos perfiles existentes en un rincón. No ejecutes después `schema.sql` en ese mismo proyecto. La migración se aplicó al proyecto `vpnwtoucbxvxvfhyhepp` el 19 de octubre de 2026; no la repitas allí.
+
 1. Entrá a https://supabase.com/dashboard y creá un proyecto nuevo de Supabase.
 2. Abrí **SQL Editor** y ejecutá **una sola vez** el contenido completo de `schema.sql`.
 3. En **Authentication → Providers / Sign In**, activá **Allow anonymous sign-ins** (a veces figura como *Anonymous Sign-Ins*). Sin esto, el botón «Crear mi perfil» va a dar error. **No necesitás habilitar ni configurar el correo**, ni desactivar las protecciones del proveedor Email.
